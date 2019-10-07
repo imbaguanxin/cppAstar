@@ -1,0 +1,32 @@
+---
+title: "path"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# install.packages("rgl")
+# library(rgl)
+library(tidyverse)
+library(plotly)
+```
+
+## import data 
+```{r import_data}
+read_as_df <- function(path, col_name) {
+  df <- read.csv(path, header = FALSE) %>% data.frame()
+  names(df) <- col_name
+  return(df)
+}
+
+points <- read.csv("path.csv")
+
+head(points)
+```
+
+## plot using plotly package
+```{r plotly}
+points %>% 
+  plot_ly() %>%
+  add_paths(x = ~x, y = ~y, z = ~z)
+```
