@@ -2,15 +2,17 @@
 // Created by imbaguanxin on 2019/9/27.
 //
 
+#include <glm/glm.hpp>
+#include <glm/gtx/hash.hpp>
 #include <iostream>
 #include <cmath>
-#include "aStarPathPlanner.h"
+#include <unordered_map>
+#include <map>
 #include <limits>
-#include <glm/glm.hpp>
-#include <glm/vec3.hpp>
+#include "aStarPathPlanner.h"
+#include "model/threeDModel.h"
 
 using namespace std;
-using namespace glm;
 
 aStarPathPlanner::aStarPathPlanner(model::threeDmodel &m)
         : model(m), step(1.0) {
@@ -73,7 +75,7 @@ bool aStarPathPlanner::planPath(glm::vec3 fromP, glm::vec3 toP) {
 
 bool aStarPathPlanner::astarPlan(glm::vec3 fromP, glm::vec3 toP) {
     path = vector<glm::vec3>();
-    map<glm::vec3, int> passedPoints = map<glm::vec3, int>();
+    unordered_map<glm::vec3, int> passedPoints = unordered_map<glm::vec3, int>();
     glm::vec3 tempStartPoint = glm::vec3(fromP);
     while (true) {
         try {
@@ -91,21 +93,25 @@ bool aStarPathPlanner::astarPlan(glm::vec3 fromP, glm::vec3 toP) {
     }
 }
 
-glm::vec3 aStarPathPlanner::astarFindNext(glm::vec3 fromP, glm::vec3 toP, std::map<glm::vec3, int> &passed) {
+glm::vec3 aStarPathPlanner::astarFindNext(glm::vec3 fromP, glm::vec3 toP, unordered_map<glm::vec3, int> &passed) {
     bool hasNextPointflag = false;
     glm::vec3 nextPoint;
     float minDis = numeric_limits<float>::max();
     for (auto const &dir: possibleDir) {
-        glm::vec3 possibleNext = glm::vec3(fromP) + (glm::vec3(dir) * (step));
+        glm::vec3 possibleNext = glm::vec3(fromP) + (glm::vec3(dir) * step);
         if (glm::distance(possibleNext, toP) <= glm::length(dir) * step) {
             return toP;
         }
         if (model.checkValidPos(possibleNext.x, possibleNext.y, possibleNext.z) &&
             !model.checkBlocked(possibleNext.x, possibleNext.y, possibleNext.z)) {
-            float distanceNext = passed.count(possibleNext) == 1 ?
-                                 glm::distance(possibleNext, toP) * passed[possibleNext] +
-                                 glm::length(dir) * step :
-                                 glm::distance(possibleNext, toP) + glm::length(dir) * step;
+            float distanceNext = 0;
+            auto mapSearch = passed.find(possibleNext);
+            if (mapSearch != passed.end()) {
+                distanceNext =
+                        glm::distance(possibleNext, toP) * mapSearch->second + glm::length(dir) * step;
+            } else {
+                distanceNext = glm::distance(possibleNext, toP) + glm::length(dir) * step;
+            }
             if (distanceNext < minDis) {
                 minDis = distanceNext;
                 nextPoint = possibleNext;
@@ -116,11 +122,28 @@ glm::vec3 aStarPathPlanner::astarFindNext(glm::vec3 fromP, glm::vec3 toP, std::m
     if (!hasNextPointflag) {
         throw invalid_argument("not able to reach");
     } else {
-        if (passed.count(nextPoint) > 0) {
-            passed.emplace(&nextPoint, passed[nextPoint] + 1);
+        auto mapSearch = passed.find(nextPoint);
+        if (mapSearch != passed.end()) {
+            passed.emplace(nextPoint, mapSearch->second + 1);
         } else {
-            passed.emplace(&nextPoint, 1);
+            passed.emplace(nextPoint, 1);
         }
         return nextPoint;
     }
 }
+
+vector<glm::vec3> aStarPathPlanner::getPath() {
+    vector<glm::vec3> result = vector<glm::vec3>();
+    for (auto &ite : path) {
+        result.emplace_back(glm::vec3(ite));
+    }
+    return result;
+}
+
+void aStarPathPlanner::getPath(std::vector<glm::vec3> &carrier) {
+    for (auto &ite : path) {
+        carrier.emplace_back(glm::vec3(ite));
+    }
+}
+
+

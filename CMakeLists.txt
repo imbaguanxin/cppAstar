@@ -12,4 +12,4 @@ file(GLOB modelFiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 file(GLOB aStar RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         include/aStar/*.cpp include/model/*.h)
 
-add_executable(cppPractice main.cpp ${modelFiles} ${aStar})
+add_executable(astar-cpp main.cpp ${modelFiles} ${aStar})

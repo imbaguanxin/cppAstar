@@ -2,6 +2,8 @@
 // Created by imbaguanxin on 9/26/2019.
 //
 
+#ifndef ASTAR_CPP_THREEDMODEL_HPP
+#define ASTAR_CPP_THREEDMODEL_HPP
 
 #include <vector>
 
@@ -53,5 +55,4 @@ public:
     void setBlocked(bool block);
 };
 
-
-#endif //CPPPRACTICE_THREEDMODEL_H
+#endif //ASTAR_CPP_THREEDMODEL_HPP
