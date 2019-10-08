@@ -1,9 +1,7 @@
 //
-// Created by 11655 on 2019/9/27.
+// Created by imbaguanxin on 2019/9/27.
 //
 
-#ifndef CPPPRACTICE_ASTARPATHPLANNER_H
-#define CPPPRACTICE_ASTARPATHPLANNER_H
 
 
 #include <model/threeDModel.h>
@@ -27,7 +25,7 @@ private:
 
 public:
 
-    aStarPathPlanner(model::threeDmodel &m);
+    explicit aStarPathPlanner(model::threeDmodel &m);
 
     void initDir();
 
@@ -36,5 +34,3 @@ public:
     bool planPath(glm::vec3 fromP, glm::vec3 toP);
 };
 
-
-#endif //CPPPRACTICE_ASTARPATHPLANNER_H

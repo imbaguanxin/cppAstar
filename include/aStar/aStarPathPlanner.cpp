@@ -1,9 +1,9 @@
 //
-// Created by 11655 on 2019/9/27.
+// Created by imbaguanxin on 2019/9/27.
 //
 
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include "aStarPathPlanner.h"
 #include <limits>
 #include <glm/glm.hpp>

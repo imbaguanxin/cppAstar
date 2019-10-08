@@ -1,9 +1,7 @@
 //
-// Created by 11655 on 9/26/2019.
+// Created by imbaguanxin on 9/26/2019.
 //
 
-#ifndef CPPPRACTICE_THREEDMODEL_H
-#define CPPPRACTICE_THREEDMODEL_H
 
 #include <vector>
 
@@ -48,7 +46,7 @@ private:
 public:
     grid();
 
-    grid(bool block);
+    explicit grid(bool block);
 
     bool getBlocked();
 
