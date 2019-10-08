@@ -21,8 +21,6 @@ private:
 
     std::vector<std::vector<std::vector<grid>>> space;
 
-
-
     int xlength, ylength, zlength;
 
 public:

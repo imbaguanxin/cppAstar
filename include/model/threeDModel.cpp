@@ -4,7 +4,7 @@
 
 #include "threeDModel.h"
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 using namespace std;
 
@@ -58,7 +58,7 @@ namespace model {
     }
 
     bool threeDmodel::checkValidPos(float x, float y, float z) {
-        return 0 <= x && x <= xlength && 0 <= y && y <= ylength && 0 <= z && z <= zlength;
+        return 0 <= x && x <= (float) xlength && 0 <= y && y <= (float) ylength && 0 <= z && z <= (float) zlength;
     }
 
     bool threeDmodel::checkBlocked(float x, float y, float z) {

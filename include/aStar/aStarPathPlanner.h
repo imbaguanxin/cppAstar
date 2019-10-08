@@ -25,10 +25,6 @@ private:
 
     glm::vec3 astarFindNext(glm::vec3 fromP, glm::vec3 toP, std::map<glm::vec3, int> &passed);
 
-    static float distanceVec3(glm::vec3 const v1, glm::vec3 const v2);
-
-    static float lengthVec3(glm::vec3 const v);
-
 public:
 
     aStarPathPlanner(model::threeDmodel &m);

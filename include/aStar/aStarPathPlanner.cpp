@@ -6,8 +6,11 @@
 #include <math.h>
 #include "aStarPathPlanner.h"
 #include <limits>
+#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 
 using namespace std;
+using namespace glm;
 
 aStarPathPlanner::aStarPathPlanner(model::threeDmodel &m)
         : model(m), step(1.0) {
@@ -94,15 +97,15 @@ glm::vec3 aStarPathPlanner::astarFindNext(glm::vec3 fromP, glm::vec3 toP, std::m
     float minDis = numeric_limits<float>::max();
     for (auto const &dir: possibleDir) {
         glm::vec3 possibleNext = glm::vec3(fromP) + (glm::vec3(dir) * (step));
-        if (distanceVec3(possibleNext, toP) <= lengthVec3(dir) * step) {
+        if (glm::distance(possibleNext, toP) <= glm::length(dir) * step) {
             return toP;
         }
         if (model.checkValidPos(possibleNext.x, possibleNext.y, possibleNext.z) &&
             !model.checkBlocked(possibleNext.x, possibleNext.y, possibleNext.z)) {
             float distanceNext = passed.count(possibleNext) == 1 ?
-                                 distanceVec3(possibleNext, toP) * passed[possibleNext] +
-                                 lengthVec3(dir) * step :
-                                 distanceVec3(possibleNext, toP) + lengthVec3(dir) * step;
+                                 glm::distance(possibleNext, toP) * passed[possibleNext] +
+                                 glm::length(dir) * step :
+                                 glm::distance(possibleNext, toP) + glm::length(dir) * step;
             if (distanceNext < minDis) {
                 minDis = distanceNext;
                 nextPoint = possibleNext;
@@ -120,12 +123,4 @@ glm::vec3 aStarPathPlanner::astarFindNext(glm::vec3 fromP, glm::vec3 toP, std::m
         }
         return nextPoint;
     }
-}
-
-float aStarPathPlanner::distanceVec3(glm::vec3 const v1, glm::vec3 const v2) {
-    return sqrtf(pow(v1.x - v2.x, 2) + pow(v1.y - v2.y, 2) + pow(v1.z - v2.z, 2));
-}
-
-float aStarPathPlanner::lengthVec3(glm::vec3 const v) {
-    return sqrtf(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2));
 }

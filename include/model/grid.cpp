@@ -3,7 +3,6 @@
 //
 
 #include "threeDModel.h"
-#include <iostream>
 
 namespace model {
     grid::grid()
