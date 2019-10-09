@@ -20,6 +20,7 @@ read_as_df <- function(path, col_name) {
 }
 
 points <- read.csv("path.csv")
+points_pick <- read.csv("path_pick.csv")
 
 head(points)
 ```
@@ -29,4 +30,13 @@ head(points)
 points %>% 
   plot_ly() %>%
   add_paths(x = ~x, y = ~y, z = ~z)
+
+points_pick %>% 
+  plot_ly() %>%
+  add_paths(x = ~x, y = ~y, z = ~z)
 ```
+
+
+
+
+
