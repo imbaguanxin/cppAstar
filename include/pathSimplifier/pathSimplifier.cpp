@@ -78,10 +78,10 @@ vector<glm::vec3> pathSimplifier::findBlockedPieces(glm::vec3 from, glm::vec3 to
 bool pathSimplifier::checkSingleBlock(glm::vec3 from, glm::vec3 to, glm::vec3 blockedPosition) {
     glm::vec4 from4 = glm::vec4(from.x, from.y, from.z, 1);
     glm::vec4 to4 = glm::vec4(to.x, to.y, to.z, 1);
-    glm::mat4 modelView = glm::translate(glm::mat4, glm::vec3(-blockedPosition.x - 0.5f, -blockedPosition.y - 0.5f,
-                                                              -blockedPosition.z - 0.5f));
+    glm::mat4 modelView = glm::translate(glm::mat4(), glm::vec3(-blockedPosition.x - 0.5f, -blockedPosition.y - 0.5f,
+                                                                -blockedPosition.z - 0.5f));
     glm::vec4 newFrom = modelView * from4;
-    glm::vec4 newTo = modelView * to4);
+    glm::vec4 newTo = modelView * to4;
     glm::vec4 dir = newTo - glm::vec4(newFrom);
     dir.w = 0;
     return checkSingleBlockedHelp(newFrom, dir);
@@ -115,4 +115,4 @@ pair<glm::vec3, glm::vec3> pathSimplifier::findBoxBound(glm::vec3 from, glm::vec
     return {boxLow, boxHigh};
 }
 
-}
+
