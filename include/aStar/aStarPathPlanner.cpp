@@ -167,7 +167,7 @@ void aStarPathPlanner::setStepLength(float length) {
         stepLength = length;
     } else {
         cout << "step should be positive!" << endl;
-        length = 0.1;
+        stepLength = 0.1;
     }
 }
 
