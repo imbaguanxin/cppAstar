@@ -2,7 +2,7 @@
 // Created by imbaguanxin on 2019/10/9.
 //
 
-#include "pathSimplifier.hpp"
+#include "blockCheckerSimplifier.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -11,18 +11,18 @@
 
 using namespace std;
 
-pathSimplifier::pathSimplifier() {
+blockCheckerSimplifier::blockCheckerSimplifier() {
     simplifiedPath = vector<glm::vec3>();
 };
 
-pathSimplifier::pathSimplifier(model::threeDmodel &m) :
+blockCheckerSimplifier::blockCheckerSimplifier(model::threeDmodel &m) :
         mapModel(m) {}
 
-void pathSimplifier::setModel(model::threeDmodel &m) {
+void blockCheckerSimplifier::setModel(model::threeDmodel &m) {
     mapModel = m;
 }
 
-void pathSimplifier::simplify(vector<glm::vec3> oriPath) {
+void blockCheckerSimplifier::simplify(vector<glm::vec3> oriPath) {
     simplifiedPath = vector<glm::vec3>();
     simplifiedPath.emplace_back(glm::vec3(oriPath[0]));
     int beginIndex = 0;
@@ -42,7 +42,7 @@ void pathSimplifier::simplify(vector<glm::vec3> oriPath) {
     }
 }
 
-bool pathSimplifier::checkValidPath(glm::vec3 from, glm::vec3 to) {
+bool blockCheckerSimplifier::checkValidPath(glm::vec3 from, glm::vec3 to) {
     vector<glm::vec3> blockedPieces = findBlockedPieces(from, to);
     for (auto blocked : blockedPieces) {
         if (checkSingleBlock(from, to, blocked)) {
@@ -53,7 +53,7 @@ bool pathSimplifier::checkValidPath(glm::vec3 from, glm::vec3 to) {
 }
 
 
-vector<glm::vec3> pathSimplifier::findBlockedPieces(glm::vec3 from, glm::vec3 to) {
+vector<glm::vec3> blockCheckerSimplifier::findBlockedPieces(glm::vec3 from, glm::vec3 to) {
     vector<glm::vec3> result = vector<glm::vec3>();
     pair<glm::vec3, glm::vec3> boxBound = findBoxBound(from, to);
     int boxLowX = (int) boxBound.first.x;
@@ -75,7 +75,7 @@ vector<glm::vec3> pathSimplifier::findBlockedPieces(glm::vec3 from, glm::vec3 to
 }
 
 
-bool pathSimplifier::checkSingleBlock(glm::vec3 from, glm::vec3 to, glm::vec3 blockedPosition) {
+bool blockCheckerSimplifier::checkSingleBlock(glm::vec3 from, glm::vec3 to, glm::vec3 blockedPosition) {
     glm::vec4 from4 = glm::vec4(from.x, from.y, from.z, 1);
     glm::vec4 to4 = glm::vec4(to.x, to.y, to.z, 1);
     glm::mat4 modelView = glm::translate(glm::mat4(), glm::vec3(-blockedPosition.x - 0.5f, -blockedPosition.y - 0.5f,
@@ -88,7 +88,7 @@ bool pathSimplifier::checkSingleBlock(glm::vec3 from, glm::vec3 to, glm::vec3 bl
 }
 
 
-bool pathSimplifier::checkSingleBlockedHelp(glm::vec4 s, glm::vec4 v) {
+bool blockCheckerSimplifier::checkSingleBlockedHelp(glm::vec4 s, glm::vec4 v) {
     float txMin = min((-0.5f - s.x) / v.x, (0.5f - s.x) / v.x);
     float txMax = max((-0.5f - s.x) / v.x, (0.5f - s.x) / v.x);
     float tyMin = min((-0.5f - s.y) / v.y, (0.5f - s.y) / v.y);
@@ -103,7 +103,7 @@ bool pathSimplifier::checkSingleBlockedHelp(glm::vec4 s, glm::vec4 v) {
 }
 
 
-pair<glm::vec3, glm::vec3> pathSimplifier::findBoxBound(glm::vec3 from, glm::vec3 to) {
+pair<glm::vec3, glm::vec3> blockCheckerSimplifier::findBoxBound(glm::vec3 from, glm::vec3 to) {
     double fromX = floor(from.x);
     double fromY = floor(from.y);
     double fromZ = floor(from.z);

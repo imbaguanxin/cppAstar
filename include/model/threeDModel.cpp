@@ -68,4 +68,12 @@ namespace model {
             throw invalid_argument("Grid out of bound!");
         }
     }
+
+    bool threeDmodel::checkBlocked(glm::vec3 pt) {
+        return checkBlocked(pt.x, pt.y, pt.z);
+    }
+
+    bool threeDmodel::checkValidPos(glm::vec3 pt) {
+        return checkValidPos(pt.x, pt.y, pt.z);
+    }
 }

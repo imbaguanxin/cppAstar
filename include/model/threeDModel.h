@@ -6,6 +6,7 @@
 #define ASTAR_CPP_THREEDMODEL_HPP
 
 #include <vector>
+#include <glm/glm.hpp>
 
 namespace model {
 
@@ -34,6 +35,10 @@ public:
     bool checkBlocked(float x, float y, float z);
 
     bool checkValidPos(float x, float y, float z);
+
+    bool checkBlocked(glm::vec3 pt);
+
+    bool checkValidPos(glm::vec3 pt);
 
     void printInfo();
 

@@ -2,13 +2,13 @@
 // Created by imbaguanxin on 2019/10/9.
 //
 
-#ifndef ASTAR_CPP_PATHSIMPLIFIER_HPP
-#define ASTAR_CPP_PATHSIMPLIFIER_HPP
+#ifndef ASTAR_CPP_BLOCKCHECKERSIMPLIFIER_HPP
+#define ASTAR_CPP_BLOCKCHECKERSIMPLIFIER_HPP
 
 #include "model/threeDModel.h"
 #include <glm/glm.hpp>
 
-class pathSimplifier {
+class blockCheckerSimplifier {
 private:
 
     model::threeDmodel mapModel;
@@ -26,9 +26,9 @@ private:
     static std::pair<glm::vec3, glm::vec3> findBoxBound(glm::vec3 from, glm::vec3 to);
 
 public:
-    pathSimplifier();
+    blockCheckerSimplifier();
 
-    explicit pathSimplifier(model::threeDmodel &m);
+    explicit blockCheckerSimplifier(model::threeDmodel &m);
 
     void setModel(model::threeDmodel &m);
 
@@ -36,4 +36,4 @@ public:
 };
 
 
-#endif //ASTAR_CPP_PATHSIMPLIFIER_HPP
+#endif //ASTAR_CPP_BLOCKCHECKERSIMPLIFIER_HPP
