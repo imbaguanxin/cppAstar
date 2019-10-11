@@ -14,13 +14,13 @@ class aStarPathPlanner {
 
 private:
     float stepLength, droneSize;
+
 public:
     void setStepLength(float length);
 
     void setDroneSize(float size);
 
 private:
-
     model::threeDmodel model;
 
     std::vector<glm::vec3> possibleDir, path, sixDirs;
@@ -31,11 +31,11 @@ private:
 
     glm::vec3 astarFindNext(glm::vec3 fromP, glm::vec3 toP, std::unordered_map<glm::vec3, int> &passed);
 
+    void initDir();
+
 public:
 
     explicit aStarPathPlanner(model::threeDmodel &m);
-
-    void initDir();
 
     bool planPath(glm::vec3 fromP, glm::vec3 toP);
 

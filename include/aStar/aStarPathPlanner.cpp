@@ -14,7 +14,7 @@
 using namespace std;
 
 aStarPathPlanner::aStarPathPlanner(model::threeDmodel &m)
-        : model(m), stepLength(0.1), droneSize(1.0) {
+        : model(m), stepLength(0.1), droneSize(0) {
     path = vector<glm::vec3>();
     initDir();
 }

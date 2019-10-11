@@ -8,21 +8,25 @@
 #include <glm/gtx/transform.hpp>
 
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 
-blockCheckerSimplifier::blockCheckerSimplifier() {
-    simplifiedPath = vector<glm::vec3>();
+blockCheckerSimplifier::blockCheckerSimplifier() :
+        droneSize(0), simplifiedPath(vector<glm::vec3>()) {
 };
 
 blockCheckerSimplifier::blockCheckerSimplifier(model::threeDmodel &m) :
-        mapModel(m) {}
+        mapModel(m), simplifiedPath(vector<glm::vec3>()), droneSize(0) {}
 
 void blockCheckerSimplifier::setModel(model::threeDmodel &m) {
     mapModel = m;
 }
 
-void blockCheckerSimplifier::simplify(vector<glm::vec3> oriPath) {
+std::vector<glm::vec3> blockCheckerSimplifier::simplify(const vector<glm::vec3> &oriPath) {
+    if (oriPath.size() < 2) {
+        throw invalid_argument("no path to simplify");
+    }
     simplifiedPath = vector<glm::vec3>();
     simplifiedPath.emplace_back(glm::vec3(oriPath[0]));
     int beginIndex = 0;
@@ -40,6 +44,8 @@ void blockCheckerSimplifier::simplify(vector<glm::vec3> oriPath) {
             }
         }
     }
+    simplifiedPath.emplace_back(glm::vec3(oriPath.at(oriPath.size() - 1)));
+    return simplifiedPath;
 }
 
 bool blockCheckerSimplifier::checkValidPath(glm::vec3 from, glm::vec3 to) {
@@ -75,7 +81,7 @@ vector<glm::vec3> blockCheckerSimplifier::findBlockedPieces(glm::vec3 from, glm:
 }
 
 
-bool blockCheckerSimplifier::checkSingleBlock(glm::vec3 from, glm::vec3 to, glm::vec3 blockedPosition) {
+bool blockCheckerSimplifier::checkSingleBlock(glm::vec3 &from, glm::vec3 &to, glm::vec3 &blockedPosition) {
     glm::vec4 from4 = glm::vec4(from.x, from.y, from.z, 1);
     glm::vec4 to4 = glm::vec4(to.x, to.y, to.z, 1);
     glm::mat4 modelView = glm::translate(glm::mat4(), glm::vec3(-blockedPosition.x - 0.5f, -blockedPosition.y - 0.5f,
@@ -88,7 +94,7 @@ bool blockCheckerSimplifier::checkSingleBlock(glm::vec3 from, glm::vec3 to, glm:
 }
 
 
-bool blockCheckerSimplifier::checkSingleBlockedHelp(glm::vec4 s, glm::vec4 v) {
+bool blockCheckerSimplifier::checkSingleBlockedHelp(glm::vec4 &s, glm::vec4 &v) {
     float txMin = min((-0.5f - s.x) / v.x, (0.5f - s.x) / v.x);
     float txMax = max((-0.5f - s.x) / v.x, (0.5f - s.x) / v.x);
     float tyMin = min((-0.5f - s.y) / v.y, (0.5f - s.y) / v.y);
@@ -113,6 +119,10 @@ pair<glm::vec3, glm::vec3> blockCheckerSimplifier::findBoxBound(glm::vec3 from, 
     glm::vec3 boxLow = glm::vec3(min(fromX, toX), min(fromY, toY), min(fromZ, toZ));
     glm::vec3 boxHigh = glm::vec3(max(fromX, toX), max(fromY, toY), max(fromZ, toZ));
     return {boxLow, boxHigh};
+}
+
+void blockCheckerSimplifier::setDroneSize(float dSize) {
+    blockCheckerSimplifier::droneSize = dSize;
 }
 
 

@@ -17,9 +17,9 @@ read_as_df <- function(path, col_name) {
   return(df)
 }
 
-points <- read.csv("data/path.csv")
-points_pick_block1 <- read.csv("data/path_pick_block.csv")
-points_pick_reg <- read.csv("data/path_pick_reg.csv")
+points <- read.csv("data/cpp_astar_path.csv")
+points_pick_block <- read.csv("data/cpp_block_simplified.csv")
+points_pick_reg <- read.csv("data/cpp_reg_simplified.csv")
 
 head(points)
 head(points_pick_block)

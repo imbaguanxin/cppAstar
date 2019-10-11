@@ -5,8 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 include_directories(include)
 
-
-file(GLOB modelFiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+file(GLOB model RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         include/model/*.cpp include/model/*.h)
 
 file(GLOB aStar RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -15,4 +14,4 @@ file(GLOB aStar RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 file(GLOB simplifier RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         include/pathSimplifier/*.cpp include/pathSimplifier/*.h)
 
-add_executable(astar-cpp main.cpp ${modelFiles} ${aStar} ${simplifier})
+add_executable(astar-cpp main.cpp ${model} ${aStar} ${simplifier})
