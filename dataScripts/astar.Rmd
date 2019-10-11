@@ -1,0 +1,46 @@
+---
+title: "path"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(plotly)
+```
+
+## import data 
+```{r import_data}
+read_as_df <- function(path, col_name) {
+  df <- read.csv(path, header = FALSE) %>% data.frame()
+  names(df) <- col_name
+  return(df)
+}
+
+points <- read.csv("data/path.csv")
+points_pick_block1 <- read.csv("data/path_pick_block.csv")
+points_pick_reg <- read.csv("data/path_pick_reg.csv")
+
+head(points)
+head(points_pick_block)
+head(points_pick_reg)
+```
+
+## plot using plotly package
+```{r plotly}
+print_points <- function(input_df){
+  return (input_df %>% 
+            plot_ly() %>% 
+            add_paths(x = ~x, y = ~y, z = ~z))
+}
+
+print_points(points)
+print_points(points_pick_block)
+print_points(points_pick_reg)
+
+```
+
+
+
+
+
