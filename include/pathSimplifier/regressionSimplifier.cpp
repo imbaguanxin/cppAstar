@@ -10,7 +10,7 @@
 using namespace std;
 
 regressionSimplifier::regressionSimplifier() :
-        droneSize(0.0), restriction(7.0) {}
+        droneSize(0.1){}
 
 regressionSimplifier::regressionSimplifier(float dSize) :
         droneSize(dSize){}
