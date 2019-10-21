@@ -9,24 +9,33 @@
 #include <glm/glm.hpp>
 
 class blockCheckerSimplifier {
+
 private:
 
+    // mapModel stores a 3D map.
     model::threeDmodel mapModel;
 
+    // the result of simplified path.
     std::vector<glm::vec3> simplifiedPath;
 
+    // The Size of a drone in meter
     float droneSize;
 
 public:
 
+    // A default constructor that set droneSize to 0 and no map model.
     blockCheckerSimplifier();
 
+    // A constructor that sets a model (drone size is set to 0)
     explicit blockCheckerSimplifier(model::threeDmodel &m);
 
+    // model setter
     void setModel(model::threeDmodel &m);
 
+    // simplifies a path based on A* path
     std::vector<glm::vec3> simplify(const std::vector<glm::vec3> &oriPath);
 
+    // drone size setter
     void setDroneSize(float dSize);
 
 private:

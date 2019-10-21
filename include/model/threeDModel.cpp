@@ -74,10 +74,12 @@ namespace model {
         }
     }
 
+    // Check whether a position is blocked
     bool threeDmodel::checkBlocked(glm::vec3 pt) {
         return checkBlocked(pt.x, pt.y, pt.z);
     }
 
+    // check whether a position is within the map
     bool threeDmodel::checkValidPos(glm::vec3 pt) {
         return checkValidPos(pt.x, pt.y, pt.z);
     }

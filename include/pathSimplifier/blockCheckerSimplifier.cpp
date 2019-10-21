@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 blockCheckerSimplifier::blockCheckerSimplifier() :
         droneSize(0), simplifiedPath(vector<glm::vec3>()) {
 };
@@ -24,28 +25,34 @@ void blockCheckerSimplifier::setModel(model::threeDmodel &m) {
 }
 
 std::vector<glm::vec3> blockCheckerSimplifier::simplify(const vector<glm::vec3> &oriPath) {
-    if (oriPath.size() < 2) {
-        throw invalid_argument("no path to simplify");
-    }
     simplifiedPath = vector<glm::vec3>();
-    simplifiedPath.emplace_back(glm::vec3(oriPath[0]));
-    int beginIndex = 0;
-    int endIndex = 1;
-    if (oriPath.size() <= 1) {
-        simplifiedPath = oriPath;
+    if (oriPath.size() < 2) {
+        if (oriPath.empty()) {
+            simplifiedPath.emplace_back(new glm::vec3(0, 0, 0));
+        } else {
+            simplifiedPath.emplace_back(oriPath.at(0));
+        }
+        throw invalid_argument("no path to simplify");
     } else {
-        while (endIndex < oriPath.size()) {
-            if (!checkValidPath(oriPath.at(beginIndex), oriPath.at(endIndex))) {
-                simplifiedPath.emplace_back(glm::vec3(oriPath.at(endIndex - 1)));
-                beginIndex = endIndex;
-                endIndex++;
-            } else {
-                endIndex++;
+        simplifiedPath.emplace_back(glm::vec3(oriPath[0]));
+        int beginIndex = 0;
+        int endIndex = 1;
+        if (oriPath.size() <= 1) {
+            simplifiedPath = oriPath;
+        } else {
+            while (endIndex < oriPath.size()) {
+                if (!checkValidPath(oriPath.at(beginIndex), oriPath.at(endIndex))) {
+                    simplifiedPath.emplace_back(glm::vec3(oriPath.at(endIndex - 1)));
+                    beginIndex = endIndex;
+                    endIndex++;
+                } else {
+                    endIndex++;
+                }
             }
         }
+        simplifiedPath.emplace_back(glm::vec3(oriPath.at(oriPath.size() - 1)));
+        return simplifiedPath;
     }
-    simplifiedPath.emplace_back(glm::vec3(oriPath.at(oriPath.size() - 1)));
-    return simplifiedPath;
 }
 
 bool blockCheckerSimplifier::checkValidPath(glm::vec3 from, glm::vec3 to) {

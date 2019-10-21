@@ -46,8 +46,10 @@ public:
     // Check whether a specific grid is blocked, input is a vec3
     bool checkBlocked(glm::vec3 pt);
 
-    // Check whether a specific position is valid in the map model
-    // input is a vec3
+    /**
+     * Check whether a specific position is valid in the map model
+     * @param pt This is a point represented by a glm vector
+     */
     bool checkValidPos(glm::vec3 pt);
 
     // cout info of the model
