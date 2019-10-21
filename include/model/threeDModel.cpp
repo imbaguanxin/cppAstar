@@ -10,9 +10,11 @@ using namespace std;
 
 namespace model {
 
+    // Default constructor sets a empty 3D map
     threeDmodel::threeDmodel()
             : xlength(0), ylength(0), zlength(0) {}
 
+    // Constructs a 3D map with all grid unblocked
     threeDmodel::threeDmodel(int x, int y, int z)
             : xlength(max(x, 0)), ylength(max(y, 0)), zlength(max(z, 0)) {
         if (x > 0 && y > 0 && z > 0) {
@@ -35,6 +37,7 @@ namespace model {
         }
     }
 
+    // print out all information of a 3d model
     void threeDmodel::printInfo() {
         for (int x = 0; x < xlength; x++) {
             for (int y = 0; y < ylength; y++) {
@@ -49,6 +52,7 @@ namespace model {
         }
     }
 
+    // Grid setter
     void threeDmodel::setGrid(float x, float y, float z, bool block) {
         if (checkValidPos(x, y, z)) {
             space.at(floor(x)).at(floor(y)).at(floor(z)).setBlocked(block);
@@ -57,6 +61,7 @@ namespace model {
         }
     }
 
+    // check whether a position is valid in the map(won't go outside the map)
     bool threeDmodel::checkValidPos(float x, float y, float z) {
         return 0 <= x && x <= (float) xlength && 0 <= y && y <= (float) ylength && 0 <= z && z <= (float) zlength;
     }
