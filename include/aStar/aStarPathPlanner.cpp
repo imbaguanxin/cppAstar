@@ -147,7 +147,7 @@ glm::vec3 aStarPathPlanner::astarFindNext(glm::vec3 fromP, glm::vec3 toP, unorde
             // If the drone has passed the next step candidate, we higher its score.
             if (mapSearch != passed.end()) {
                 distanceNext =
-                        glm::distance(possibleNext, toP) * mapSearch->second + glm::length(dir) * stepLength;
+                        glm::distance(possibleNext, toP) * (mapSearch->second + 1) + glm::length(dir) * stepLength;
             } else {
                 distanceNext = glm::distance(possibleNext, toP) + glm::length(dir) * stepLength;
             }
