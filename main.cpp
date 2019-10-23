@@ -5,7 +5,6 @@
 #include "pathSimplifier/blockCheckerSimplifier.hpp"
 #include "pathSimplifier/regressionSimplifier.hpp"
 #include <glm/glm.hpp>
-#include <glm/ext.hpp>
 #include <fstream>
 
 using namespace std;

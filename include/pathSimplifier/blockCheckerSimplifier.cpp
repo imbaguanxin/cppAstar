@@ -28,7 +28,7 @@ std::vector<glm::vec3> blockCheckerSimplifier::simplify(const vector<glm::vec3> 
     simplifiedPath = vector<glm::vec3>();
     if (oriPath.size() < 2) {
         if (oriPath.empty()) {
-            simplifiedPath.emplace_back(new glm::vec3(0, 0, 0));
+            simplifiedPath.emplace_back(glm::vec3(0, 0, 0));
         } else {
             simplifiedPath.emplace_back(oriPath.at(0));
         }
