@@ -111,11 +111,11 @@ bool aStarPathPlanner::astarPlan(glm::vec3 fromP, glm::vec3 toP) {
                 path.emplace_back(glm::vec3(nextPoint));
             }
         } catch (char *e) {
+            // TODO everytime when the path plan fail, return a single point
             // If not able to find a path, check whether the path is empty.
             // If the path is empty, simply put a single start point to keep the next steps working.
-            if (path.empty()) {
-                path.emplace_back(glm::vec3(fromP));
-            }
+            path.clear();
+            path.emplace_back(glm::vec3(fromP));
             return false;
         }
     }
@@ -164,8 +164,10 @@ glm::vec3 aStarPathPlanner::astarFindNext(glm::vec3 fromP, glm::vec3 toP, unorde
         throw invalid_argument("not able to reach");
     } else {
         // If found a next point, mark it to the "passed point map" and then return it.
+        // TODO dont need to find in the passed, just second++ of the nextPoint
         auto mapSearch = passed.find(nextPoint);
         if (mapSearch != passed.end()) {
+            // TODO and in your demo, this doesnt happen
             passed.emplace(nextPoint, mapSearch->second + 1);
         } else {
             passed.emplace(nextPoint, 1);
