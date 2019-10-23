@@ -51,7 +51,6 @@ int main() {
 
     regressionSimplifier rs = regressionSimplifier();
     rs.setDroneSize(DRONE_SIZE);
-    rs.setRestriction(10);
     vector<glm::vec3> regSimplified = rs.simplify(temp);
 
     file.open("../dataScripts/data/cpp_reg_simplified.csv", ios::out);
