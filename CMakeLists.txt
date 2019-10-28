@@ -9,12 +9,12 @@ file(GLOB model RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         include/model/*.cpp include/model/*.h)
 
 file(GLOB aStar RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        include/aStar/*.cpp include/model/*.h)
+        include/aStar/*.cpp include/aStar/*.h include/aStar/*.hpp)
 
 file(GLOB simplifier RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         include/pathSimplifier/*.cpp include/pathSimplifier/*.h)
 
 file(GLOB generator RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        include/wayPointsGenerator/*.cpp include/wayPointsGenerator/*.h)
+        include/wayPointsGenerator/*.cpp include/wayPointsGenerator/*.hpp)
 
 add_executable(astar-cpp main.cpp ${model} ${aStar} ${simplifier} ${generator})

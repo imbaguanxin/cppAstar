@@ -55,6 +55,12 @@ public:
     // cout info of the model
     void printInfo();
 
+    int getXlength();
+
+    int getYlength();
+
+    int getZlength();
+
 };
 
 // This is a specific grid. Similar to a Wrapper Class of boolean

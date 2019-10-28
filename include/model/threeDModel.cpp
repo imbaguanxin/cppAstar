@@ -83,4 +83,16 @@ namespace model {
     bool threeDmodel::checkValidPos(glm::vec3 pt) {
         return checkValidPos(pt.x, pt.y, pt.z);
     }
+
+    int threeDmodel::getXlength() {
+        return xlength;
+    }
+
+    int threeDmodel::getYlength() {
+        return ylength;
+    }
+
+    int threeDmodel::getZlength() {
+        return zlength;
+    }
 }

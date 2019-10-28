@@ -5,16 +5,16 @@
 #ifndef ASTAR_CPP_WAYPOINTSGENERATOR_HPP
 #define ASTAR_CPP_WAYPOINTSGENERATOR_HPP
 
-#include "aStar/aStarPathPlanner.h"
+#include "aStar/aStar.hpp"
 #include "pathSimplifier/regressionSimplifier.hpp"
 
 class wayPointsGenerator {
 
 private:
 
-    float gridSize, droneSize, stepLength;
+    float grid_size, drone_size;
 
-    aStarPathPlanner astar;
+    aStar astar;
 
     regressionSimplifier simplifier;
 
@@ -24,13 +24,11 @@ public:
 
     explicit wayPointsGenerator(model::threeDmodel &m);
 
-    wayPointsGenerator(model::threeDmodel &m, float gs, float ds, float sl);
+    wayPointsGenerator(model::threeDmodel &m, float gridSize, float droneSize);
 
     void setModel(model::threeDmodel &m);
 
     void setDroneSize(float ds);
-
-    void setStepLength(float sl);
 
     std::vector<glm::vec3> genPoints(glm::vec3 &fromP, glm::vec3 &toP);
 
