@@ -1,11 +1,8 @@
 #include <iostream>
 
 #include "model/threeDModel.h"
-//#include "aStar/aStarPathPlanner.h"
 #include "aStar/aStar.hpp"
-#include "pathSimplifier/blockCheckerSimplifier.hpp"
 #include "pathSimplifier/regressionSimplifier.hpp"
-//#include "wayPointsGenerator/wayPointsGenerator.hpp"
 #include <glm/glm.hpp>
 #include <fstream>
 #include <wayPointsGenerator/wayPointsGenerator.hpp>
@@ -26,7 +23,6 @@ int main() {
     glm::vec3 destination(27, 27, 27);
 
     // test astar
-
     aStar astar(demoModel);
     astar.setDroneSize(DRONE_SIZE);
     bool res = astar.aStarPathPlan(startPoint, destination);
@@ -43,6 +39,7 @@ int main() {
         cout << "unable to open file." << endl;
     }
 
+    // test regression simplifier
     vector<glm::vec3> tempVec = vector<glm::vec3>();
     for (auto vec : temp) {
         tempVec.emplace_back(vec);
@@ -61,7 +58,7 @@ int main() {
     } else {
         cout << "unable to open file." << endl;
     }
-//
+
     // test wayPointsGenerator
     wayPointsGenerator wpg(demoModel, 1.0, DRONE_SIZE);
     vector<glm::vec3> wayPointsResult = wpg.genPoints(startPoint, destination);
