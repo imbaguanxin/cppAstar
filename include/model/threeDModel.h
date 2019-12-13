@@ -64,6 +64,8 @@ public:
     // cout info of the model
     void printInfo();
 
+    void printInfoSearched();
+
     int getXlength();
 
     int getYlength();

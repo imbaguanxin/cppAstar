@@ -56,6 +56,26 @@ namespace model {
         }
     }
 
+    // print out all information of a 3d model
+    void threeDmodel::printInfoSearched() {
+        for (int x = 0; x < xlength; x++) {
+            for (int y = 0; y < ylength; y++) {
+                for (int z = 0; z < zlength; z++) {
+                    grid g = space.at(x).at(y).at(z);
+                    if (g.getStatus() == THREE_D_GRID_SEARCHED) {
+                        glm::vec3 parent = g.getFather();
+                        cout << x << " , "
+                             << y << " , "
+                             << z << " , " <<
+                             g.getStatus() <<
+                             " parent: " << "(" << parent.x << ", " << parent.y << ", " << parent.z << ")"
+                             << endl;
+                    }
+                }
+            }
+        }
+    }
+
     // Grid setter
     void threeDmodel::setGrid(float x, float y, float z, int gridStatus) {
         if (checkValidPos(x, y, z)) {
@@ -77,7 +97,7 @@ namespace model {
 
     // check whether a position is valid in the map(won't go outside the map)
     bool threeDmodel::checkValidPos(float x, float y, float z) {
-        return 0 <= x && x <= (float) xlength && 0 <= y && y <= (float) ylength && 0 <= z && z <= (float) zlength;
+        return 0 <= x && x < (float) xlength && 0 <= y && y < (float) ylength && 0 <= z && z < (float) zlength;
     }
 
     // check whether a position is within the map
@@ -99,14 +119,14 @@ namespace model {
 
     glm::vec3 threeDmodel::getFather(float x, float y, float z) {
         if (checkValidPos(x, y, z)) {
-            space.at(floor(x)).at(floor(y)).at(floor(z)).getFather();
+            return space.at(floor(x)).at(floor(y)).at(floor(z)).getFather();
         } else {
             throw invalid_argument("Grid out of bound!");
         }
     }
 
     glm::vec3 threeDmodel::getFather(glm::vec3 pt) {
-        getFather(pt.x, pt.y, pt.z);
+        return getFather(pt.x, pt.y, pt.z);
     }
 
     int threeDmodel::getXlength() {

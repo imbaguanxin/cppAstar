@@ -78,7 +78,7 @@ vector<glm::vec3> blockCheckerSimplifier::findBlockedPieces(glm::vec3 from, glm:
     for (int x = boxLowX; x <= boxHighX; x++) {
         for (int y = boxLowY; y <= boxHighY; y++) {
             for (int z = boxLowZ; z <= boxHighZ; z++) {
-                if (mapModel.checkBlocked(x, y, z)) {
+                if (mapModel.checkStatus(x, y, z) == THREE_D_GRID_EMPTY) {
                     result.emplace_back(glm::vec3(x, y, z));
                 }
             }
