@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(astar-cpp-new)
+project(astar-cpp)
 
 set(CMAKE_CXX_STANDARD 11)
 
