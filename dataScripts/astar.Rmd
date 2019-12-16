@@ -48,15 +48,15 @@ p <- plot_ly() %>%
   # draw blocked
   add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
             x = map_block$x, y = map_block$y, z = map_block$z, 
-            marker = list(color = c('#BF382A'), 
-                          symbol = 'square', size = '0.5', opacity = '0.5')) %>% 
+            marker = list(color = c('#696969'), 
+                          symbol = 'square', size = '2', opacity = '0.5')) %>% 
   # draw searched
   add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
             x = map_searched$x, y = map_searched$y, z = map_searched$z, 
-            marker = list(color = c('#bcbd22'), 
-                          symbol = 'square', size = '0.2', opacity = '0.5')) %>% 
+            marker = list(color = c('#66ccff'), 
+                          symbol = 'square', size = '0.4', opacity = '0.5')) %>% 
   
   add_paths(x = points_pick_reg$x, y = points_pick_reg$y, z = points_pick_reg$z,
-            line = list(width = 10, color = '#66ccff'))
+            line = list(width = 10, color = '#FF0000'))
 p
 ```

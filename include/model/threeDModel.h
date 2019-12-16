@@ -52,22 +52,20 @@ public:
      * Check whether a specific position is valid in the map model
      * @param pt This is a point represented by a glm vector
      */
-    bool checkValidPos(glm::vec3 pt);
+    bool checkValidPos(glm::vec3 &pt);
 
     int checkStatus(float x, float y, float z);
 
-    int checkStatus(glm::vec3 pt);
+    int checkStatus(glm::vec3 &pt);
 
     glm::vec3 getFather(float x, float y, float z);
 
-    glm::vec3 getFather(glm::vec3 pt);
+    glm::vec3 getFather(glm::vec3 &pt);
 
     // cout info of the model
     void printInfo();
 
     void printInfoSearched();
-
-    std::string printStatus();
 
     int getXlength();
 

@@ -101,12 +101,12 @@ namespace model {
     }
 
     // check whether a position is within the map
-    bool threeDmodel::checkValidPos(glm::vec3 pt) {
+    bool threeDmodel::checkValidPos(glm::vec3 &pt) {
         return checkValidPos(pt.x, pt.y, pt.z);
     }
 
     // check the status of a point in the form of glm vector.
-    int threeDmodel::checkStatus(glm::vec3 pt) {
+    int threeDmodel::checkStatus(glm::vec3 &pt) {
         return checkStatus(pt.x, pt.y, pt.z);
     }
 
@@ -128,7 +128,7 @@ namespace model {
         }
     }
 
-    glm::vec3 threeDmodel::getFather(glm::vec3 pt) {
+    glm::vec3 threeDmodel::getFather(glm::vec3 &pt) {
         return getFather(pt.x, pt.y, pt.z);
     }
 

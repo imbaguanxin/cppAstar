@@ -113,7 +113,7 @@ void aStar::clearReferenceTable() {
 /**
  * Register a position as searched position.
  */
-void aStar::setBeenTo(glm::vec3 pos) {
+void aStar::setBeenTo(glm::vec3 &pos) {
     referenceTable.setGrid(pos.x, pos.y, pos.z, THREE_D_GRID_SEARCHED);
 }
 
@@ -145,7 +145,7 @@ waitingListElement aStar::findLeastScorePoint() {
  * @param parent  The parent node
  * @param toP  The destination
  */
-void aStar::populateWaitingList(waitingListElement parent, glm::vec3 toP) {
+void aStar::populateWaitingList(waitingListElement parent, const glm::vec3 &toP) {
     glm::vec3 fp = parent.getPosition();
     if (glm::distance(fp, toP) < droneSize) {
         referenceTable.setFather(toP, fp);
@@ -169,9 +169,9 @@ void aStar::populateWaitingList(waitingListElement parent, glm::vec3 toP) {
  * Find whether a position is available to reach in the map model.
  * @param pos The position needs test.
  */
-bool aStar::reachableAndHaventBeenTo(glm::vec3 pos) {
-    if (model.checkValidPos(pos)) {
-        if (referenceTable.checkStatus(pos) == THREE_D_GRID_SEARCHED) return false;
+bool aStar::reachableAndHaventBeenTo(const glm::vec3 &pos) {
+    if (model.checkValidPos(pos.x, pos.y, pos.z)) {
+        if (referenceTable.checkStatus(pos.x, pos.y, pos.z) == THREE_D_GRID_SEARCHED) return false;
         float scale = droneSize;
         // ensure that the drone is good on 26 directions.
         while (scale > 0) {

@@ -127,7 +127,7 @@ private:
     /**
     * Register a position as searched position.
     */
-    void setBeenTo(glm::vec3 pos);
+    void setBeenTo(glm::vec3 &pos);
 
     /**
      * Find the node with the lowest score in waiting list.
@@ -139,13 +139,13 @@ private:
      * @param parent  The parent node
      * @param toP  The destination
      */
-    void populateWaitingList(waitingListElement parent, glm::vec3 toP);
+    void populateWaitingList(waitingListElement parent, const glm::vec3 &toP);
 
     /**
      * Find whether a position is available to reach in the map model.
      * @param pos The position needs test.
      */
-    bool reachableAndHaventBeenTo(glm::vec3 pos);
+    bool reachableAndHaventBeenTo(const glm::vec3 &pos);
 };
 
 #endif //ASTAR_CPP_ASTAR_HPP
