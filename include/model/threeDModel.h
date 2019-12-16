@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include <string>
 
 const int THREE_D_GRID_EMPTY = 0,
         THREE_D_GRID_BLOCKED = 1,
@@ -65,6 +66,8 @@ public:
     void printInfo();
 
     void printInfoSearched();
+
+    std::string printStatus();
 
     int getXlength();
 

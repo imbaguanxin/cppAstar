@@ -105,10 +105,12 @@ namespace model {
         return checkValidPos(pt.x, pt.y, pt.z);
     }
 
+    // check the status of a point in the form of glm vector.
     int threeDmodel::checkStatus(glm::vec3 pt) {
         return checkStatus(pt.x, pt.y, pt.z);
     }
 
+    // check the status of a point
     int threeDmodel::checkStatus(float x, float y, float z) {
         if (checkValidPos(x, y, z)) {
             space.at(floor(x)).at(floor(y)).at(floor(z)).getStatus();
@@ -117,6 +119,7 @@ namespace model {
         }
     }
 
+    // check the father of a given point. If there is no father, it returns itself.
     glm::vec3 threeDmodel::getFather(float x, float y, float z) {
         if (checkValidPos(x, y, z)) {
             return space.at(floor(x)).at(floor(y)).at(floor(z)).getFather();

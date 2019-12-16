@@ -18,12 +18,11 @@ read_as_df <- function(path, col_name) {
 }
 
 points <- read.csv("data/cpp_astar_path.csv")
-points_pick_block <- read.csv("data/cpp_block_simplified.csv")
 points_pick_reg <- read.csv("data/cpp_reg_simplified.csv")
+three_d_map <- read.csv("data/status.csv")
 
 head(points)
-head(points_pick_block)
-head(points_pick_reg)
+points_pick_reg
 ```
 
 ## plot using plotly package
@@ -35,12 +34,29 @@ print_points <- function(input_df){
 }
 
 print_points(points)
-print_points(points_pick_block)
 print_points(points_pick_reg)
 
 ```
 
 
+## visiualization with searched areas and blocked areas.
+```{r mesh}
+map_block <- three_d_map %>% filter(status == 1)
+map_searched <- three_d_map %>% filter(status == 2)
 
-
-
+p <- plot_ly() %>%
+  # draw blocked
+  add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
+            x = map_block$x, y = map_block$y, z = map_block$z, 
+            marker = list(color = c('#BF382A'), 
+                          symbol = 'square', size = '0.5', opacity = '0.5')) %>% 
+  # draw searched
+  add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
+            x = map_searched$x, y = map_searched$y, z = map_searched$z, 
+            marker = list(color = c('#bcbd22'), 
+                          symbol = 'square', size = '0.2', opacity = '0.5')) %>% 
+  
+  add_paths(x = points_pick_reg$x, y = points_pick_reg$y, z = points_pick_reg$z,
+            line = list(width = 10, color = '#66ccff'))
+p
+```

@@ -43,63 +43,79 @@ int main() {
             }
         }
     }
-//    demoModel.printInfo();
     glm::vec3 startPoint(1, 1, 1);
-    glm::vec3 destination(10, 80, 10);
+    glm::vec3 destination(10, 80, 28);
 
     // test astar
     aStar astar(demoModel);
     astar.setDroneSize(DRONE_SIZE);
-    bool res = astar.aStarPathPlan(startPoint, destination);
-//    if (res){
-//        astar.referenceTable.printInfoSearched();
-//    }
-    list<glm::vec3> temp = astar.getPath();
-    fstream file;
-    file.open("../dataScripts/data/cpp_astar_path.csv", ios::out);
-    if (file.is_open()) {
-        file << "x,y,z" << endl;
-        for (auto &ite : temp) {
-            file << ite.x << "," << ite.y << "," << ite.z << endl;
+    if (astar.aStarPathPlan(startPoint, destination)) {
+        cout << "here" << endl;
+
+        fstream file;
+        file.open("../dataScripts/data/status.csv", ios::out);
+        if (file.is_open()) {
+            file << "x,y,z,status" << endl;
+            for(int x = 0; x < astar.referenceTable.getXlength(); ++x) {
+                for(int y = 0; y < astar.referenceTable.getYlength(); ++y) {
+                    for(int z = 0; z < astar.referenceTable.getZlength(); ++z) {
+                        int num = std::max(astar.referenceTable.checkStatus(x,y,z), astar.model.checkStatus(x,y,z));
+                        file << x << "," << y << "," << z << "," << num << endl;
+                    }
+                }
+            }
+            file.close();
+        } else {
+            cout << "unable to open file." << endl;
         }
-        file.close();
-    } else {
-        cout << "unable to open file." << endl;
-    }
-
-    // test regression simplifier
-    vector<glm::vec3> tempVec = vector<glm::vec3>();
-    for (auto vec : temp) {
-        tempVec.emplace_back(vec);
-    }
-    regressionSimplifier rs = regressionSimplifier();
-    rs.setDroneSize(DRONE_SIZE);
-    vector<glm::vec3> regSimplified = rs.simplify(tempVec);
-
-    file.open("../dataScripts/data/cpp_reg_simplified.csv", ios::out);
-    if (file.is_open()) {
-        file << "x,y,z" << endl;
-        for (auto &ite : regSimplified) {
-            file << ite.x << "," << ite.y << "," << ite.z << endl;
+        list<glm::vec3> temp = astar.getPath();
+//        fstream file;
+        file.open("../dataScripts/data/cpp_astar_path.csv", ios::out);
+        if (file.is_open()) {
+            file << "x,y,z" << endl;
+            for (auto &ite : temp) {
+                file << ite.x << "," << ite.y << "," << ite.z << endl;
+            }
+            file.close();
+        } else {
+            cout << "unable to open file." << endl;
         }
-        file.close();
-    } else {
-        cout << "unable to open file." << endl;
-    }
-
-    // test wayPointsGenerator
-    wayPointsGenerator wpg(demoModel, 1.0, DRONE_SIZE);
-    vector<glm::vec3> wayPointsResult = wpg.genPoints(startPoint, destination);
-    file.open("../dataScripts/data/cpp_wayPointGenerator.csv", ios::out);
-    if (file.is_open()) {
-        file << "x,y,z" << endl;
-        for (auto &ite : wayPointsResult) {
-            file << ite.x << "," << ite.y << "," << ite.z << endl;
+        // test regression simplifier
+        vector<glm::vec3> tempVec = vector<glm::vec3>();
+        for (auto vec : temp) {
+            tempVec.emplace_back(vec);
         }
-        file.close();
-    } else {
-        cout << "unable to open file." << endl;
-    }
+        regressionSimplifier rs = regressionSimplifier();
+        rs.setDroneSize(DRONE_SIZE);
+        vector<glm::vec3> regSimplified = rs.simplify(tempVec);
 
+        file.open("../dataScripts/data/cpp_reg_simplified.csv", ios::out);
+        if (file.is_open()) {
+            file << "x,y,z" << endl;
+            for (auto &ite : regSimplified) {
+                file << ite.x << "," << ite.y << "," << ite.z << endl;
+            }
+            file.close();
+        } else {
+            cout << "unable to open file." << endl;
+        }
+
+        // test wayPointsGenerator
+        wayPointsGenerator wpg(demoModel, 1.0, DRONE_SIZE);
+        vector<glm::vec3> wayPointsResult = wpg.genPoints(startPoint, destination);
+        file.open("../dataScripts/data/cpp_wayPointGenerator.csv", ios::out);
+        if (file.is_open()) {
+            file << "x,y,z" << endl;
+            for (auto &ite : wayPointsResult) {
+                file << ite.x << "," << ite.y << "," << ite.z << endl;
+            }
+            file.close();
+        } else {
+            cout << "unable to open file." << endl;
+        }
+    } else {
+        cout << "path finding failed" << endl;
+        return -1;
+    }
     return 0;
 }

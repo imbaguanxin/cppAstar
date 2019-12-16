@@ -5,6 +5,7 @@
 #ifndef ASTAR_CPP_ASTAR_HPP
 #define ASTAR_CPP_ASTAR_HPP
 
+#include <iostream>
 #include <glm/glm.hpp>
 #include <list>
 
@@ -24,7 +25,7 @@ public:
             x(std::floor(pt.x)), y(std::floor(pt.y)), z(std::floor(pt.z)), score(Score), h(H) {}
 
     glm::vec3 getPosition() {
-        return glm::vec3((float)x, (float)y, (float)z);
+        return glm::vec3((float) x, (float) y, (float) z);
     }
 
     void printInfo() {
@@ -90,6 +91,31 @@ public:
     std::list<glm::vec3> getPath();
 
 
+    /**
+     * print the searched reference table for debug.
+     */
+    void printSearchedReference() {
+        referenceTable.printInfoSearched();
+    }
+
+    /**
+     * Print the reference table for debug.
+     */
+    void printAllReference() {
+        referenceTable.printInfo();
+    }
+
+    /**
+     * Print out the waiting list information for debug.
+     */
+    void printWaitingList() {
+        std::cout << "waitingList size:" << waitingList.size() << std::endl;
+        for (auto &i : waitingList) {
+            i.printInfo();
+        }
+    }
+
+
 private:
 
     // initialize the 26 directions in 3D
@@ -120,13 +146,6 @@ private:
      * @param pos The position needs test.
      */
     bool reachableAndHaventBeenTo(glm::vec3 pos);
-
-    void printWaitingList(){
-        std::cout << "waitingList size:" << waitingList.size() << std::endl;
-        for (auto & i : waitingList) {
-            i.printInfo();
-        }
-    }
 };
 
 #endif //ASTAR_CPP_ASTAR_HPP
