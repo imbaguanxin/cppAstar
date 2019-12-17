@@ -26,7 +26,7 @@ points_pick_reg
 ```
 
 ## plot using plotly package
-```{r plotly}
+```{r plotly, warning=FALSE}
 print_points <- function(input_df){
   return (input_df %>% 
             plot_ly() %>% 
@@ -40,11 +40,11 @@ print_points(points_pick_reg)
 
 
 ## visiualization with searched areas and blocked areas.
-```{r mesh}
-map_block <- three_d_map %>% filter(status == 1)
-map_searched <- three_d_map %>% filter(status == 2)
-
-p <- plot_ly() %>%
+```{r mesh, warning=FALSE}
+print_3D_model_path <- function(map_df, path_df, block_status = 1, searched_status = 2) {
+  map_block <- map_df %>% filter(status == block_status)
+  map_searched <- map_df %>% filter(status == searched_status)
+  p <- plot_ly() %>%
   # draw blocked
   add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
             x = map_block$x, y = map_block$y, z = map_block$z, 
@@ -54,9 +54,13 @@ p <- plot_ly() %>%
   add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
             x = map_searched$x, y = map_searched$y, z = map_searched$z, 
             marker = list(color = c('#66ccff'), 
-                          symbol = 'square', size = '0.4', opacity = '0.5')) %>% 
+                          symbol = 'square', size = '0.2', opacity = '1')) %>% 
   
-  add_paths(x = points_pick_reg$x, y = points_pick_reg$y, z = points_pick_reg$z,
+  add_paths(x = path_df$x, y = path_df$y, z = path_df$z,
             line = list(width = 10, color = '#FF0000'))
-p
+  p
+}
+
+print_3D_model_path(three_d_map, points_pick_reg)
+
 ```
