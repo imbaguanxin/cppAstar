@@ -199,7 +199,7 @@ bool aStar::reachableAndHaventBeenTo(const glm::vec3 &pos) {
  * After running the algorithm, call getPath() to get the result of astar planning
  * @return a list of points in 3D, in terms of grid unit.
  */
-std::list<glm::vec3> aStar::getPath() {
+std::vector<glm::vec3> aStar::getPath() {
     list<glm::vec3> path = list<glm::vec3>();
     glm::vec3 curr = endP;
     while (referenceTable.getFather(curr) != curr) {
@@ -207,5 +207,9 @@ std::list<glm::vec3> aStar::getPath() {
         curr = referenceTable.getFather(curr);
     }
     path.push_front(curr);
-    return path;
+    std::vector<glm::vec3> result;
+    for (auto &ite : path){
+        result.push_back(ite);
+    }
+    return result;
 }

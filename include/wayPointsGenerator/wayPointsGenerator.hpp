@@ -7,6 +7,7 @@
 
 #include "aStar/aStar.hpp"
 #include "pathSimplifier/regressionSimplifier.hpp"
+#include "HGJPathSmooth/vec3f.h"
 
 class wayPointsGenerator {
 
@@ -39,11 +40,13 @@ public:
     void setDroneSize(float ds);
 
     // generate points: first use A* algorithm then simplify
-    std::vector<glm::vec3> genPoints(glm::vec3 &fromP, glm::vec3 &toP);
+    std::vector<glm::vec3> genPoints(const glm::vec3 &fromP, const glm::vec3 &toP);
 
     // return the generated points without regenerating.
     std::vector<glm::vec3> getGeneratedPoints();
 
+    // return wayPoints in HGJPathSmooth::vec3f
+    std::vector<HGJ::vec3f> getGeneratedPointsHGJ();
 };
 
 

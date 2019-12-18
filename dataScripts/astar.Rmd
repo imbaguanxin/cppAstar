@@ -20,27 +20,41 @@ read_as_df <- function(path, col_name) {
 points <- read.csv("data/cpp_astar_path.csv")
 points_pick_reg <- read.csv("data/cpp_reg_simplified.csv")
 three_d_map <- read.csv("data/status.csv")
+curve_points <- read.csv("data/cpp_smoothCurv.csv")
 
 head(points)
-points_pick_reg
+head(points_pick_reg)
 ```
 
-## plot using plotly package
-```{r plotly, warning=FALSE}
+## visiualization of the path
+Following section prints out the path as lines and no map information is demonstrated.
+```{r plotly, include=FALSE, warning=FALSE}
 print_points <- function(input_df){
   return (input_df %>% 
             plot_ly() %>% 
             add_paths(x = ~x, y = ~y, z = ~z))
 }
-
+```
+Demonstration of path from astar:
+```{r print_points, warning=FALSE}
 print_points(points)
+```
+Demonstration of path after regression based selector:
+```{r regression, warning=FALSE}
 print_points(points_pick_reg)
-
+```
+Demonstration of path of smooth curve:
+```{r curve, warning=FALSE}
+print_points(curve_points)
 ```
 
 
 ## visiualization with searched areas and blocked areas.
-```{r mesh, warning=FALSE}
+Following section prints out the path and blocked areas.
+Blocked areas are in the color of grey (#696969)
+Searched areas are in the color of sky-blue (#66ccff)
+path are in the color of red (#ff0000), the width of the path is extended to 10.
+```{r plot_model, include=FALSE, warning=FALSE}
 print_3D_model_path <- function(map_df, path_df, block_status = 1, searched_status = 2) {
   map_block <- map_df %>% filter(status == block_status)
   map_searched <- map_df %>% filter(status == searched_status)
@@ -60,7 +74,12 @@ print_3D_model_path <- function(map_df, path_df, block_status = 1, searched_stat
             line = list(width = 10, color = '#FF0000'))
   p
 }
-
+```
+Map and non-smoothed path:
+```{r print_model_reg}
 print_3D_model_path(three_d_map, points_pick_reg)
-
+```
+Map and smoothed path:
+```{r print_model_smooth}
+print_3D_model_path(three_d_map, curve_points)
 ```

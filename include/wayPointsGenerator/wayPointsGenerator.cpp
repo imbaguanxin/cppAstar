@@ -28,20 +28,17 @@ void wayPointsGenerator::setDroneSize(float ds) {
 }
 
 // generate points: first use A* algorithm then simplify
-std::vector<glm::vec3> wayPointsGenerator::genPoints(glm::vec3 &fromP, glm::vec3 &toP) {
+std::vector<glm::vec3> wayPointsGenerator::genPoints(const glm::vec3 &fromP, const glm::vec3 &toP) {
     float imaginary_droneSize = drone_size / grid_size;
     astar.setDroneSize(imaginary_droneSize);
     simplifier.setDroneSize(imaginary_droneSize);
     try {
         // A* planning
         astar.aStarPathPlan(fromP, toP);
-        std::list<glm::vec3> aStarResult = astar.getPath();
-        std::vector<glm::vec3> vecResult = std::vector<glm::vec3>();
-        for (auto point : aStarResult) {
-            vecResult.emplace_back(point);
-        }
+        std::vector<glm::vec3> aStarResult = astar.getPath();
         // simplifier
-        return simplifier.simplify(vecResult);
+        wayPointsPath = simplifier.simplify(aStarResult);
+        return wayPointsPath;
     } catch (std::exception &e) {
         std::cout << "Can't find a valid path" << std::endl;
         std::vector<glm::vec3> result = std::vector<glm::vec3>();
@@ -53,8 +50,16 @@ std::vector<glm::vec3> wayPointsGenerator::genPoints(glm::vec3 &fromP, glm::vec3
 // return the generated points without regenerating.
 std::vector<glm::vec3> wayPointsGenerator::getGeneratedPoints() {
     std::vector<glm::vec3> result = std::vector<glm::vec3>();
-    for (auto point : wayPointsPath) {
+    for (auto &point : wayPointsPath) {
         result.emplace_back(glm::vec3(point));
+    }
+    return result;
+}
+
+std::vector<HGJ::vec3f> wayPointsGenerator::getGeneratedPointsHGJ() {
+    std::vector<HGJ::vec3f> result;
+    for (auto &point: wayPointsPath) {
+        result.emplace_back(HGJ::vec3f(point.x, point.y, point.z));
     }
     return result;
 }

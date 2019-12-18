@@ -6,6 +6,7 @@
 #define ASTAR_CPP_ASTAR_HPP
 
 #include <iostream>
+#include <sstream>
 #include <glm/glm.hpp>
 #include <list>
 
@@ -86,9 +87,9 @@ public:
 
     /**
      * After running the algorithm, call getPath() to get the result of astar planning
-     * @return a list of points in 3D, in terms of grid unit.
+     * @return a vector of points in 3D, in terms of grid unit.
      */
-    std::list<glm::vec3> getPath();
+    std::vector<glm::vec3> getPath();
 
 
     /**
@@ -113,6 +114,20 @@ public:
         for (auto &i : waitingList) {
             i.printInfo();
         }
+    }
+
+    std::string printModelToString() {
+        std::stringstream ss;
+        ss << "x,y,z,status" << std::endl;
+        for (int x = 0; x < model.getXlength(); ++x) {
+            for (int y = 0; y < model.getYlength(); ++y) {
+                for (int z = 0; z < model.getZlength(); ++z) {
+                    int num = std::max(referenceTable.checkStatus(x, y, z), model.checkStatus(x, y, z));
+                    ss << x << "," << y << "," << z << "," << num << std::endl;
+                }
+            }
+        }
+        return ss.str();
     }
 
 
