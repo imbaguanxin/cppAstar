@@ -203,6 +203,7 @@ int wayPointsTest() {
     string fileName = "../dataScripts/data/cpp_wayPointGenerator.csv";
     printPointsFromVector(fileName, wayPointsResult);
     cout << "wayPointsGenerator Test finished, log to file" << endl;
+    return 0;
 }
 
 int wayPointsPathSmoothTest() {
@@ -213,7 +214,7 @@ int wayPointsPathSmoothTest() {
 
     model::threeDmodel demoModel = genDemoModel();
     // test wayPointsGenerator
-    cout << "wayPointsGenerator Test starts" << endl;
+    cout << "wayPointsGenerator Path Smooth Test starts" << endl;
     wayPointsGenerator wpg(demoModel, 1.0, DRONE_SIZE);
     wpg.genPoints(startPoint, destination);
     cout << "way points finish generating" << endl;
