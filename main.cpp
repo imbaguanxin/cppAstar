@@ -221,7 +221,7 @@ int wayPointsPathSmoothTest() {
     vector<HGJ::vec3f> wayPoints = wpg.getGeneratedPointsHGJ();
     HGJ::pathPlanner planner;
     cout << "smoothing starts" << endl;
-    auto path = planner.genCurv(wayPoints, 0.01, 10, 0.0, 0.0 );
+    auto path = planner.genCurv(wayPoints, 0.01, 0.1, 0.0, 0.0 );
     cout << "smoothing finishes, log to file." << endl;
     fstream file;
     file.open("../dataScripts/data/cpp_smoothCurv.csv", ios::out);
