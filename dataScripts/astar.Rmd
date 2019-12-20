@@ -135,11 +135,11 @@ differentiate_df <- function(df, names, newNames, dt = 0.01){
   # 两者做差，得到差分效果，并除以时间间隔
   data_difference <- (data - data_move_down) / dt
   # 把每个值都平方
-  data_difference <- data_difference %>% sapply(function(v){return(v^2)}) %>% as.data.frame
+  data_difference_next <- data_difference %>% sapply(function(v){return(v^2)}) %>% as.data.frame
   # 一列一列的值加起来变成新的一列
-  data_difference$sum <- runif(nrow(data_difference), 0, 0)
+  data_difference$sum <- runif(nrow(data_difference_next), 0, 0)
   for(i in 1:length(names)){
-    data_difference$sum <-  data_difference$sum + data_difference[,names[i]]
+    data_difference$sum <-  data_difference$sum + data_difference_next[,names[i]]
   }
   # 开方
   data_difference$sum <- data_difference$sum %>% sqrt()
@@ -170,10 +170,10 @@ processed_curve$err <- err_df$result
 
 visualization:
 ```{r visualization}
-ggplot(data = processed_curve) +
+ggplot(data = processed_curve[2000:2100,]) +
   geom_path(mapping = aes(x = time, y = speed), colour="#FF0000") #+ 
   #geom_point(mapping = aes(x = time, y = speed), colour="#66ccff")
-ggplot(data = processed_curve) + 
+ggplot(data = processed_curve[2000:2100,]) + 
   geom_path(mapping = aes(x = time, y = acc), colour="#FF0000") + 
   geom_point(mapping = aes(x = time, y = acc), colour="#66ccff")
 ggplot(data = processed_curve) + 
@@ -271,4 +271,9 @@ ggplot(data = test_curve, mapping = aes(x = time, y = acceleration)) +
 ggplot(data = test_curve, mapping = aes(x = time, y = jerk)) + 
   geom_path()  +
   geom_smooth() 
+```
+
+```{r }
+ggplot() +
+  geom_path(data = temp, mapping = aes(x = ))
 ```
