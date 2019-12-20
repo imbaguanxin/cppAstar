@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include "model/threeDModel.h"
 #include "aStar/aStar.hpp"
@@ -226,6 +227,7 @@ int wayPointsPathSmoothTest() {
     fstream file;
     file.open("../dataScripts/data/cpp_smoothCurv.csv", ios::out);
     if (file.is_open()) {
+        file << std::setprecision(10);
         file << "x,y,z" << endl;
         for (const auto & point: path) {
             file << point << endl;
