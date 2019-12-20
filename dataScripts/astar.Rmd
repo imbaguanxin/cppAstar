@@ -120,29 +120,160 @@ differential_with_time <- function(target, timePeriod){
   }
   return(result)
 }
+
+
+differentiate_df <- function(df, names, newNames, dt = 0.01){
+  # 根据输入的列名选取数据
+  data <- df %>% select(names)
+  # 新建一个数据，使得第一行数据等于原本data的第一行
+  data_move_down <- data.frame()
+  data_move_down <- data[1,]
+  # 复制data到data_move_down第一行之后。
+  data_move_down <- data_move_down %>% rbind(data)
+  # 保证data与data_move_down长度相同，方便做差
+  data_move_down <- data_move_down[1:nrow(data),]
+  # 两者做差，得到差分效果，并除以时间间隔
+  data_difference <- (data - data_move_down) / dt
+  # 把每个值都平方
+  data_difference_next <- data_difference %>% sapply(function(v){return(v^2)}) %>% as.data.frame
+  # 一列一列的值加起来变成新的一列
+  data_difference$sum <- runif(nrow(data_difference_next), 0, 0)
+  for(i in 1:length(names)){
+    data_difference$sum <-  data_difference$sum + data_difference_next[,names[i]]
+  }
+  # 开方
+  data_difference$sum <- data_difference$sum %>% sqrt()
+  colnames(data_difference) <- c(newNames, "result")
+  return(data_difference)
+}
 ```
 
 calculation:
 ```{r calculate}
 # this calculates the distance.
 time_period <- 0.01
-curve_points$distance <- find_dist_from_df(curve_points)
-curve_points$speed <- find_speed_from_distance(curve_points$distance, time_period)
-curve_points$acceleration <- differential_with_time(curve_points$speed, time_period)
-curve_points$jerk <- differential_with_time(curve_points$acceleration, time_period)
-curve_points$time <- (0:(nrow(curve_points) - 1)) * time_period
+processed_curve <- curve_points
+processed_curve$time <- (0:(nrow(processed_curve) - 1)) * time_period
+# speed
+speed_df <- differentiate_df(processed_curve, c("x", "y", "z"), c("vx", "vy", "vz"), time_period)
+processed_curve$speed <- speed_df$result
+# acceleration
+acc_df <- differentiate_df(speed_df, c("vx", "vy", "vz"), c("ax", "ay", "az"), time_period)
+processed_curve$acc <- acc_df$result
+# jerk
+j_df <- differentiate_df(acc_df, c("ax", "ay", "az"), c("jx", "jy", "jz"), time_period)
+processed_curve$jerk <- j_df$result
+# err
+err_df <- differentiate_df(j_df, c("jx", "jy", "jz"), c("ex", "ey", "ez"),  time_period)
+processed_curve$err <- err_df$result
 ```
 
 visualization:
-```{r speed_acc_jerk, warning=FALSE}
-curve_points <- curve_points %>% as.data.frame()
-ggplot(data = curve_points, mapping = aes(x = time, y = speed)) +
-  geom_path() +
-  geom_smooth() 
-ggplot(data = curve_points, mapping = aes(x = time, y = acceleration)) + 
+```{r visualization}
+ggplot(data = processed_curve[2000:2100,]) +
+  geom_path(mapping = aes(x = time, y = speed), colour="#FF0000") #+ 
+  #geom_point(mapping = aes(x = time, y = speed), colour="#66ccff")
+ggplot(data = processed_curve[2000:2100,]) + 
+  geom_path(mapping = aes(x = time, y = acc), colour="#FF0000") + 
+  geom_point(mapping = aes(x = time, y = acc), colour="#66ccff")
+ggplot(data = processed_curve) + 
+  geom_path(mapping = aes(x = time, y = jerk), colour="#FF0000") + 
+  geom_point(mapping = aes(x = time, y = jerk), colour="#66ccff")
+ggplot(data = processed_curve) + 
+  geom_path(mapping = aes(x = time, y = err), colour="#FF0000") + 
+  geom_point(mapping = aes(x = time, y = err), colour="#66ccff")
+```
+
+## Check errors:
+```{r error_checker}
+point_line_distance <- function(line_pt1, line_pt2, point){
+  a <- line_pt2 - point
+  b <- line_pt1 - point
+  #print(line_pt1)
+  #print(a)
+  #print(b)
+  clen <- (line_pt2 - line_pt1) %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
+  #print(clen)
+  alen <- a %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
+  #print(alen)
+  blen <- b %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
+  #print(blen)
+  if (alen == 0 || blen == 0){
+    return(0)
+  } else if (clen == 0) {
+    return(alen)
+  } else {
+    cos <- (a * b) %>% sum / alen / blen
+    sin <- (1 - cos^2) %>% abs %>% sqrt %>% as.numeric()
+    return(alen * blen * sin / clen)
+  }
+}
+
+error_checker <- function(refference, exam){
+  ref_df <- refference %>% as.matrix()
+  exam_df <- exam %>% as.matrix()
+  currLineNum <- 1
+  error <- runif(nrow(exam_df), 0, 0)
+  for (i in 1 : nrow(exam_df)){
+    if (currLineNum < nrow(ref_df) - 1){
+      pt1 <- ref_df[currLineNum,]
+      pt2 <- ref_df[currLineNum + 1,]
+      pt3 <- ref_df[currLineNum + 2,]
+      exam_pt <- exam_df[i,]
+  
+      d1 <- point_line_distance(pt1, pt2, exam_pt)
+      d2 <- point_line_distance(pt2, pt3, exam_pt)
+  
+      if (d2 < d1) {
+        currLineNum <- min(currLineNum + 1, nrow(ref_df) - 1)
+        error[i] <- d2
+      } else {
+        error[i] <- d1
+      }
+    
+    } else {
+      #print(sprintf("final line."))
+      pt1 <- ref_df[currLineNum,]
+      pt2 <- ref_df[currLineNum + 1,]
+      exam_pt <- exam_df[i,]
+      error[i] <- point_line_distance(pt1, pt2, exam_pt)
+    }
+  }
+  num <- c(1:nrow(exam_df))
+  error_df <- data.frame(num, error)
+  return(error_df)
+}
+
+error_df <- error_checker(points_pick_reg, curve_points)
+
+ggplot(data = error_df, mapping = aes(x = num, y = error)) + geom_path()
+```
+
+
+
+
+## old codes:
+checking:
+```{r check}
+test_curve <- curve_points
+test_curve$time <- (0:(nrow(test_curve) - 1)) * time_period
+test_curve$distance <- find_dist_from_df(test_curve)
+test_curve$speed <- find_speed_from_distance(test_curve$distance, time_period)
+test_curve$acceleration <- differential_with_time(test_curve$speed, time_period)
+test_curve$jerk <- differential_with_time(test_curve$acceleration, time_period)
+test_curve <- test_curve %>% as.data.frame()
+ggplot(data = test_curve, mapping = aes(x = time, y = speed)) +
+  geom_path() + 
+  geom_smooth()
+ggplot(data = test_curve, mapping = aes(x = time, y = acceleration)) + 
   geom_path()  +
   geom_smooth() 
-ggplot(data = curve_points, mapping = aes(x = time, y = jerk)) + 
+ggplot(data = test_curve, mapping = aes(x = time, y = jerk)) + 
   geom_path()  +
   geom_smooth() 
+```
+
+```{r }
+ggplot() +
+  geom_path(data = temp, mapping = aes(x = ))
 ```
