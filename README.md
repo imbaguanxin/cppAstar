@@ -30,7 +30,7 @@ This is a project used on Drone path planning. Followed by a path smoothing modu
 
 download r studio package
 
-`sudo dpkg -i sudo dpkg -i rstudio*****.deb`
+`sudo dpkg -i rstudio*****.deb`
 
 The "****" part is different version number.
 

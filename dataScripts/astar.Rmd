@@ -163,25 +163,22 @@ processed_curve$acc <- acc_df$result
 # jerk
 j_df <- differentiate_df(acc_df, c("ax", "ay", "az"), c("jx", "jy", "jz"), time_period)
 processed_curve$jerk <- j_df$result
-# err
-err_df <- differentiate_df(j_df, c("jx", "jy", "jz"), c("ex", "ey", "ez"),  time_period)
-processed_curve$err <- err_df$result
+jerk_df <- data.frame(processed_curve$time, processed_curve$jerk)
+colnames(jerk_df) <- c("time", "jerk")
+jerk_df <- jerk_df %>% filter(jerk < 3)
 ```
 
 visualization:
 ```{r visualization}
-ggplot(data = processed_curve[2000:2100,]) +
+ggplot(data = processed_curve) +
   geom_path(mapping = aes(x = time, y = speed), colour="#FF0000") #+ 
   #geom_point(mapping = aes(x = time, y = speed), colour="#66ccff")
-ggplot(data = processed_curve[2000:2100,]) + 
-  geom_path(mapping = aes(x = time, y = acc), colour="#FF0000") + 
-  geom_point(mapping = aes(x = time, y = acc), colour="#66ccff")
 ggplot(data = processed_curve) + 
+  geom_path(mapping = aes(x = time, y = acc), colour="#FF0000") #+ 
+  #geom_point(mapping = aes(x = time, y = acc), colour="#66ccff")
+ggplot(data = jerk_df) + 
   geom_path(mapping = aes(x = time, y = jerk), colour="#FF0000") + 
   geom_point(mapping = aes(x = time, y = jerk), colour="#66ccff")
-ggplot(data = processed_curve) + 
-  geom_path(mapping = aes(x = time, y = err), colour="#FF0000") + 
-  geom_point(mapping = aes(x = time, y = err), colour="#66ccff")
 ```
 
 ## Check errors:
@@ -189,15 +186,9 @@ ggplot(data = processed_curve) +
 point_line_distance <- function(line_pt1, line_pt2, point){
   a <- line_pt2 - point
   b <- line_pt1 - point
-  #print(line_pt1)
-  #print(a)
-  #print(b)
   clen <- (line_pt2 - line_pt1) %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
-  #print(clen)
   alen <- a %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
-  #print(alen)
   blen <- b %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
-  #print(blen)
   if (alen == 0 || blen == 0){
     return(0)
   } else if (clen == 0) {
