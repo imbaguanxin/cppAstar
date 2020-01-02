@@ -1,0 +1,210 @@
+---
+title: "Map3_2 tests"
+author: "Guan.Xin"
+date: "2020/1/2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(plotly)
+```
+
+## import data 
+```{r import_data}
+map3_2_map <- read.csv("data/map3_2_mapStatus.csv")
+map3_2_map$x <- map3_2_map$x/10
+map3_2_map$y <- map3_2_map$y/10
+map3_2_map$z <- map3_2_map$z/10
+map3_2_wayPoint <- read.csv("data/map3_2_wayPointTest.csv")
+map3_2_wayPointSmooth <- read.csv("data/map3_2_wayPointSmoothTest.csv")
+```
+
+## visiualization of the path
+Following section prints out the path as lines and no map information is demonstrated.
+```{r plotly, include=FALSE, warning=FALSE}
+print_points <- function(input_df){
+  return (input_df %>% 
+            plot_ly() %>% 
+            add_paths(x = ~x, y = ~y, z = ~z))
+}
+```
+Demonstration of wayPoints:
+```{r print_points, warning=FALSE}
+print_points(map3_2_wayPoint)
+```
+Demonstration of smoothed path
+```{r regression, warning=FALSE}
+print_points(map3_2_wayPointSmooth)
+```
+## visiualization with searched areas and blocked areas.
+Following section prints out the path and blocked areas.
+Blocked areas are in the color of grey (#696969)
+Searched areas are in the color of sky-blue (#66ccff)
+path are in the color of red (#ff0000), the width of the path is extended to 10.
+```{r plot_model, include=FALSE, warning=FALSE}
+print_3D_model_path <- function(map_df, path_df, block_status = 1, searched_status = 2, block_size = 2, search_size = 0.2, line_width = 5) {
+  map_block <- map_df %>% filter(status == block_status)
+  map_searched <- map_df %>% filter(status == searched_status)
+  p <- plot_ly() %>%
+  # draw blocked
+  add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
+            x = map_block$x, y = map_block$y, z = map_block$z, 
+            marker = list(color = c('#696969'), 
+                          symbol = 'square', size = block_size, opacity = '0.5')) %>% 
+  # draw searched
+  add_trace(type="scatter3d", mode = 'markers', ids = 'blocks',
+            x = map_searched$x, y = map_searched$y, z = map_searched$z, 
+            marker = list(color = c('#66ccff'), 
+                          symbol = 'square', size = search_size, opacity = '1')) %>% 
+  
+  add_paths(x = path_df$x, y = path_df$y, z = path_df$z,
+            line = list(width = line_width, color = '#FF0000'))
+  p
+}
+```
+Map and non-smoothed path:
+```{r print_model_reg}
+print_3D_model_path(map3_2_map, map3_2_wayPoint, block_size = 0.5, search_size = 0.1)
+
+```
+Map and smoothed path:
+```{r print_model_smooth}
+print_3D_model_path(map3_2_map, map3_2_wayPointSmooth, block_size = 0.5, search_size = 0.1)
+
+```
+
+## v-t a-t j-t visualization.
+
+In path smooth test, we performed the test with the following argument:
+1. sample period: 0.01 s
+2. max error: 0.08 m
+3. begin speed: 0 m/s
+4. end speed: 0 m/s
+
+Functions needed:
+```{r data processing, include=FALSE}
+differentiate_df <- function(df, names, newNames, dt = 0.01){
+  # 根据输入的列名选取数据
+  data <- df %>% select(names)
+  # 新建一个数据，使得第一行数据等于原本data的第一行
+  data_move_down <- data.frame()
+  data_move_down <- data[1,]
+  # 复制data到data_move_down第一行之后。
+  data_move_down <- data_move_down %>% rbind(data)
+  # 保证data与data_move_down长度相同，方便做差
+  data_move_down <- data_move_down[1:nrow(data),]
+  # 两者做差，得到差分效果，并除以时间间隔
+  data_difference <- (data - data_move_down) / dt
+  # 把每个值都平方
+  data_difference_next <- data_difference %>% sapply(function(v){return(v^2)}) %>% as.data.frame
+  # 一列一列的值加起来变成新的一列
+  data_difference$sum <- runif(nrow(data_difference_next), 0, 0)
+  for(i in 1:length(names)){
+    data_difference$sum <-  data_difference$sum + data_difference_next[,names[i]]
+  }
+  # 开方
+  data_difference$sum <- data_difference$sum %>% sqrt()
+  colnames(data_difference) <- c(newNames, "result")
+  return(data_difference)
+}
+
+generate_vaj <- function(processed_curve, time_period = 0.01, max_jerk = 3){
+  processed_curve$time <- (0:(nrow(processed_curve) - 1)) * time_period
+  # velocity
+  speed_df <- differentiate_df(processed_curve, c("x", "y", "z"), c("vx", "vy", "vz"), time_period)
+  processed_curve$speed <- speed_df$result
+  # acceleration
+  acc_df <- differentiate_df(speed_df, c("vx", "vy", "vz"), c("ax", "ay", "az"), time_period)
+  processed_curve$acc <- acc_df$result
+  # jerk
+  j_df <- differentiate_df(acc_df, c("ax", "ay", "az"), c("jx", "jy", "jz"), time_period)
+  processed_curve$jerk <- j_df$result
+  processed_curve <- processed_curve %>% filter(jerk < max_jerk)
+  return(processed_curve)
+}
+```
+
+calculation:
+```{r calculate}
+map3_2_vaj <- generate_vaj(map3_2_wayPointSmooth, 0.01)
+```
+
+
+visualization:
+```{r visualization}
+# map3_2
+currdf <- map3_2_vaj
+ggplot(data = currdf) +
+  geom_path(mapping = aes(x = time, y = speed), colour="#FF0000") +
+  ggtitle("map3_2 time-velocity")
+#  geom_point(mapping = aes(x = time, y = speed), colour="#66ccff")
+ggplot(data = currdf) + 
+  geom_path(mapping = aes(x = time, y = acc), colour="#FF0000") + 
+# geom_point(mapping = aes(x = time, y = acc), colour="#66ccff")
+ggtitle("map3_2 time-acceleration")
+ggplot(data = currdf) + 
+  geom_path(mapping = aes(x = time, y = jerk), colour="#FF0000") +
+  geom_point(mapping = aes(x = time, y = jerk), colour="#66ccff") +
+  ggtitle("map3_2 time-jerk")
+```
+
+## Check errors:
+```{r error_checker, include=FALSE}
+point_line_distance <- function(line_pt1, line_pt2, point){
+  a <- line_pt2 - point
+  b <- line_pt1 - point
+  clen <- (line_pt2 - line_pt1) %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
+  alen <- a %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
+  blen <- b %>% sapply(function(v){return(v^2)}) %>% sum %>% sqrt
+  if (alen == 0 || blen == 0){
+    return(0)
+  } else if (clen == 0) {
+    return(alen)
+  } else {
+    cos <- (a * b) %>% sum / alen / blen
+    sin <- (1 - cos^2) %>% abs %>% sqrt %>% as.numeric()
+    return(alen * blen * sin / clen)
+  }
+}
+
+error_checker <- function(refference, exam){
+  ref_df <- refference %>% as.matrix()
+  exam_df <- exam %>% as.matrix()
+  currLineNum <- 1
+  error <- runif(nrow(exam_df), 0, 0)
+  for (i in 1 : nrow(exam_df)){
+    if (currLineNum < nrow(ref_df) - 1){
+      pt1 <- ref_df[currLineNum,]
+      pt2 <- ref_df[currLineNum + 1,]
+      pt3 <- ref_df[currLineNum + 2,]
+      exam_pt <- exam_df[i,]
+  
+      d1 <- point_line_distance(pt1, pt2, exam_pt)
+      d2 <- point_line_distance(pt2, pt3, exam_pt)
+  
+      if (d2 < d1) {
+        currLineNum <- min(currLineNum + 1, nrow(ref_df) - 1)
+        error[i] <- d2
+      } else {
+        error[i] <- d1
+      }
+    
+    } else {
+      pt1 <- ref_df[currLineNum,]
+      pt2 <- ref_df[currLineNum + 1,]
+      exam_pt <- exam_df[i,]
+      error[i] <- point_line_distance(pt1, pt2, exam_pt)
+    }
+  }
+  num <- c(1:nrow(exam_df))
+  error_df <- data.frame(num, error)
+  return(error_df)
+}
+```
+```{r error_visuliazation}
+# map3
+map3_2_error <- error_checker(map3_2_wayPoint, map3_2_wayPointSmooth)
+ggplot(data = map3_2_error, mapping = aes(x = num, y = error)) + geom_path() + ggtitle("map3_2: num of point - error")
+```

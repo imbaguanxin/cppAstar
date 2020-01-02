@@ -75,6 +75,16 @@ std::ostream & HGJ::operator<<(std::ostream & os, const HGJ::vec3f &v) {
     return os;
 }
 
+bool HGJ::vec3f::operator==(const HGJ::vec3f& that) const noexcept
+{
+    return x == that.x && y == that.y && z == that.z;
+}
+
+bool HGJ::vec3f::operator!=(const HGJ::vec3f& that) const noexcept
+{
+    return !this->operator==(that);
+}
+
 HGJ::vec3f HGJ::operator*(const HGJ::vec3f & b, double d) {
     return d * b;
 }

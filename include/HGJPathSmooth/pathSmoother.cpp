@@ -17,8 +17,28 @@ using namespace std;
 HGJ::pathPlanner::pathPlanner() = default;
 
 const HGJ::WayPoints &
-HGJ::pathPlanner::genCurv(const WayPoints & wayPoints, double ts, double maxErr,
+HGJ::pathPlanner::genCurv(WayPoints wayPoints, double ts, double maxErr,
                           double beginSpdInput, double endSpdInput) {
+
+    if (!wayPoints.empty()) {
+        WayPoints modifiedWP;
+        modifiedWP.reserve(wayPoints.size());
+        modifiedWP.push_back(wayPoints.front());
+        for (int i = 1; i < wayPoints.size() - 1; ++i) {
+            if (wayPoints[i] == wayPoints[i - 1]) {
+                continue;
+            }
+            if (isnan(TurnPoint{wayPoints[i-1], wayPoints[i], wayPoints[i+1]}.beta)) {
+                continue;
+            }
+            modifiedWP.push_back(wayPoints[i]);
+        }
+        size_t i = wayPoints.size() - 1;
+        if (wayPoints[i] != wayPoints[i - 1]) {
+            modifiedWP.push_back(wayPoints[i]);
+        }
+        wayPoints.swap(modifiedWP);
+    }
 
     /// load the setting
     pathPlanner::maxErr = maxErr;
@@ -39,7 +59,7 @@ HGJ::pathPlanner::genCurv(const WayPoints & wayPoints, double ts, double maxErr,
     if (pointCount <= 1) {
         cerr << "you only add 1 point" << endl;
         answerCurve = wayPoints;
-        return wayPoints;
+        return answerCurve;
     }
 
     /// only two points are added, smooth the line
@@ -293,7 +313,7 @@ void HGJ::pathPlanner::lpSolveTheDs(vector<TurnPoint> & turnPoints) {
     /// adding the d varibles
     for (int i = 0; i < cornerCount; i++) {
         double minLen = min(turnPoints[i].lenAfter, turnPoints[i].lenBefore);
-        /// adding 0.45 for some speed change is available in some situations
+        /// adding 0.45 for some speed change available in some situations
         d.add(IloNumVar(env, 0.0, minLen * 0.45));
     }
     /// this is the max curvature

@@ -47,6 +47,10 @@ public:
 
     vec3f operator+=(const vec3f & b) noexcept;
 
+    bool operator== (const vec3f& that) const noexcept;
+
+    bool operator!= (const vec3f& that) const noexcept;
+
     double len() const;
 };
 

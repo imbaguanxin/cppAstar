@@ -15,7 +15,7 @@ aStar::aStar(model::threeDmodel &m) :
         model(m),
         referenceTable(model::threeDmodel(m.getXlength(), m.getYlength(), m.getZlength())),
         droneSize(1.0),
-        waitingList(vector<waitingListElement>()) {
+        waitingList(multimap<double, waitingListElement>()) {
     initDir();
 }
 
@@ -79,7 +79,7 @@ bool aStar::aStarPathPlan(glm::vec3 fromP, glm::vec3 toP) {
     endP = tempTo;
     // set start point
     waitingListElement currPoint = waitingListElement(tempFrom, glm::distance(tempFrom, tempTo), 0.0);
-    waitingList.emplace_back(currPoint);
+    waitingList.insert(make_pair(currPoint.score, currPoint));
     setBeenTo(startP);
     while (!waitingList.empty()) {
         currPoint = findLeastScorePoint();
@@ -105,7 +105,7 @@ bool aStar::aStarPathPlan(glm::vec3 fromP, glm::vec3 toP) {
 // wipe out the waiting list and closed table before each path planning.
 void aStar::clearReferenceTable() {
     // clear the waiting list
-    waitingList = vector<waitingListElement>();
+    waitingList = multimap<double,waitingListElement>();
     // clear the reference table
     referenceTable = model::threeDmodel(model.getXlength(), model.getYlength(), model.getZlength());
 }
@@ -121,22 +121,10 @@ void aStar::setBeenTo(glm::vec3 &pos) {
  * Find the node with the lowest score in waiting list.
  */
 waitingListElement aStar::findLeastScorePoint() {
-    float lowestScore = waitingList.at(0).score;
-    waitingListElement &result = waitingList.at(0);
-    int deleteNum = 0;
-    // iterate over all nodes in the list
-    for (int i = 0; i < waitingList.size(); ++i) {
-        waitingListElement &curr = waitingList.at(i);
-        if (curr.score < lowestScore) {
-            lowestScore = curr.score;
-            result = curr;
-            deleteNum = i;
-        }
-    }
+    multimap<double, waitingListElement>::const_iterator it = waitingList.begin();
+    waitingListElement result = it->second;
     // Delete the found node in waiting list.
-    if (deleteNum > -1) {
-        waitingList.erase(waitingList.begin() + deleteNum);
-    }
+    waitingList.erase(it);
     return result;
 }
 
@@ -149,7 +137,7 @@ void aStar::populateWaitingList(waitingListElement parent, const glm::vec3 &toP)
     glm::vec3 fp = parent.getPosition();
     if (glm::distance(fp, toP) < droneSize) {
         referenceTable.setFather(toP, fp);
-        waitingList.emplace_back(waitingListElement(toP, 0, 0));
+        waitingList.insert(make_pair(0, waitingListElement(toP, 0, 0)));
     } else {
         // Iterate over all possible directions and place them in waiting list
         for (auto &dir : possibleDir) {
@@ -159,7 +147,7 @@ void aStar::populateWaitingList(waitingListElement parent, const glm::vec3 &toP)
                 float h = parent.h + distance(fp, possibleNext);
                 float score = h + distance(possibleNext, toP);
                 referenceTable.setFather(possibleNext, fp);
-                waitingList.emplace_back(waitingListElement(possibleNext, score, h));
+                auto insertStatus = waitingList.insert(make_pair(score, waitingListElement(possibleNext, score, h)));
             }
         }
     }
@@ -208,7 +196,7 @@ std::vector<glm::vec3> aStar::getPath() {
     }
     path.push_front(curr);
     std::vector<glm::vec3> result;
-    for (auto &ite : path){
+    for (auto &ite : path) {
         result.push_back(ite);
     }
     return result;

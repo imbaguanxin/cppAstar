@@ -12,6 +12,7 @@ wayPointsGenerator::wayPointsGenerator(model::threeDmodel &m) :
         wayPointsPath(std::vector<glm::vec3>()) {}
 
 // recommended constructor
+// input
 wayPointsGenerator::wayPointsGenerator(model::threeDmodel &m, float gs, float ds) :
         astar(m), simplifier(regressionSimplifier()),
         drone_size(ds), grid_size(gs),
@@ -34,10 +35,14 @@ std::vector<glm::vec3> wayPointsGenerator::genPoints(const glm::vec3 &fromP, con
     simplifier.setDroneSize(imaginary_droneSize);
     try {
         // A* planning
-        astar.aStarPathPlan(fromP, toP);
+        astar.aStarPathPlan(glm::vec3(fromP) / grid_size, glm::vec3(toP) / grid_size);
         std::vector<glm::vec3> aStarResult = astar.getPath();
         // simplifier
-        wayPointsPath = simplifier.simplify(aStarResult);
+        std::vector<glm::vec3> simplified = simplifier.simplify(aStarResult);
+        wayPointsPath.clear();
+        for (auto pt : simplified) {
+            wayPointsPath.push_back(pt * grid_size);
+        }
         return wayPointsPath;
     } catch (std::exception &e) {
         std::cout << "Can't find a valid path" << std::endl;
@@ -56,12 +61,18 @@ std::vector<glm::vec3> wayPointsGenerator::getGeneratedPoints() {
     return result;
 }
 
+//TODO
+// This is how I generate HGJ inputs.
 std::vector<HGJ::vec3f> wayPointsGenerator::getGeneratedPointsHGJ() {
     std::vector<HGJ::vec3f> result;
     for (auto &point: wayPointsPath) {
         result.emplace_back(HGJ::vec3f(point.x, point.y, point.z));
     }
     return result;
+}
+
+void wayPointsGenerator::setGridSize(float gs) {
+    grid_size = gs;
 }
 
 

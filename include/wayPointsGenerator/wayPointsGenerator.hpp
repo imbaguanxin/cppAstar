@@ -39,6 +39,13 @@ public:
     // drone size setter
     void setDroneSize(float ds);
 
+    // grid size setter
+    void setGridSize(float gs);
+
+    std::string printModelToString() {
+        return astar.printModelToString();
+    }
+
     // generate points: first use A* algorithm then simplify
     std::vector<glm::vec3> genPoints(const glm::vec3 &fromP, const glm::vec3 &toP);
 

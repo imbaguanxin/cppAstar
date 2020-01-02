@@ -9,6 +9,7 @@
 #include <sstream>
 #include <glm/glm.hpp>
 #include <list>
+#include <map>
 
 #include "model/threeDModel.h"
 
@@ -16,19 +17,35 @@ class waitingListElement {
 
 public:
 
+
+    /*
+     * 创建waitingListElement
+     */
     waitingListElement(int X, int Y, int Z, float Score, float H) :
             x(X), y(Y), z(Z), score(Score), h(H) {}
 
+    /*
+     * 创建waitingListElement
+     */
     waitingListElement(float X, float Y, float Z, float Score, float H) :
             x(std::floor(X)), y(std::floor(Y)), z(std::floor(Z)), score(Score), h(H) {}
 
+    /*
+     * 根据vec3构建waitingListElement
+     */
     waitingListElement(glm::vec3 pt, float Score, float H) :
             x(std::floor(pt.x)), y(std::floor(pt.y)), z(std::floor(pt.z)), score(Score), h(H) {}
 
+    /*
+     * 获得waitinglistElement的地点
+     */
     glm::vec3 getPosition() {
         return glm::vec3((float) x, (float) y, (float) z);
     }
 
+    /*
+     * 用于debug的输出
+     */
     void printInfo() {
         std::cout << "(" << x << ", " << y << ", " << z << "), " << score << ", " << h << std::endl;
     }
@@ -48,7 +65,7 @@ public:
     // model: the 3D map, closeTable: the table memorize where the algorithm have searched
     model::threeDmodel model, referenceTable;
     // vecNodes that needs check
-    std::vector<waitingListElement> waitingList;
+    std::multimap<double, waitingListElement> waitingList;
     // 26 possible directions that the drone might go.
     std::vector<glm::vec3> possibleDir;
     glm::vec3 startP, endP;
@@ -107,15 +124,9 @@ public:
     }
 
     /**
-     * Print out the waiting list information for debug.
+     * 本方法将model输出成string,用于R脚本可视化.
+     * @return
      */
-    void printWaitingList() {
-        std::cout << "waitingList size:" << waitingList.size() << std::endl;
-        for (auto &i : waitingList) {
-            i.printInfo();
-        }
-    }
-
     std::string printModelToString() {
         std::stringstream ss;
         ss << "x,y,z,status" << std::endl;
